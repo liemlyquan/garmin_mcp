@@ -6,6 +6,7 @@ import asyncio
 import datetime
 import os
 from pathlib import Path
+
 from dotenv import load_dotenv
 from garminconnect import Garmin
 
@@ -18,19 +19,19 @@ async def test_direct():
     # Get credentials from environment
     email = os.environ.get("GARMIN_EMAIL")
     password = os.environ.get("GARMIN_PASSWORD")
-    
+
     print(f"Logging in with email: {email}")
-    
+
     try:
         # Create and initialize Garmin client
         client = Garmin(email, password)
         client.login()
         print("Login successful!")
-        
+
         # Test activities
         print("\nGetting recent activities...")
         activities = client.get_activities(0, 2)
-        
+
         if activities:
             print(f"Found {len(activities)} activities")
             for idx, activity in enumerate(activities, 1):
@@ -38,9 +39,9 @@ async def test_direct():
                 print(f"Name: {activity.get('activityName', 'Unknown')}")
         else:
             print("No activities found")
-            
+
         print("\nTest completed successfully!")
-        
+
     except Exception as e:
         print(f"Error: {str(e)}")
 

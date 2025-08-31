@@ -1,1 +1,0 @@
-# Garmin Connect MCP modules
