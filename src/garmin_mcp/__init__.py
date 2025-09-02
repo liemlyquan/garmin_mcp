@@ -2,34 +2,26 @@
 Modular MCP Server for Garmin Connect Data
 """
 
-import asyncio
 import os
-import datetime
+
 import requests
-from pathlib import Path
-from dotenv import load_dotenv
-
 from mcp.server.fastmcp import FastMCP
-
-# Load environment variables from .env file
-env_path = Path(__file__).parent / ".env"
-load_dotenv(dotenv_path=env_path)
 
 from garth.exc import GarthHTTPError
 from garminconnect import Garmin, GarminConnectAuthenticationError
 
 # Import all modules
-from modules import activity_management
-from modules import health_wellness
-from modules import user_profile
-from modules import devices
-from modules import gear_management
-from modules import weight_management
-from modules import challenges
-from modules import training
-from modules import workouts
-from modules import data_management
-from modules import womens_health
+from garmin_mcp import activity_management
+from garmin_mcp import health_wellness
+from garmin_mcp import user_profile
+from garmin_mcp import devices
+from garmin_mcp import gear_management
+from garmin_mcp import weight_management
+from garmin_mcp import challenges
+from garmin_mcp import training
+from garmin_mcp import workouts
+from garmin_mcp import data_management
+from garmin_mcp import womens_health
 
 def get_mfa() -> str:
     """Get MFA code from user input"""
@@ -101,15 +93,15 @@ def init_api(email, password):
 
 def main():
     """Initialize the MCP server and register all tools"""
-    
+
     # Initialize Garmin client
     garmin_client = init_api(email, password)
     if not garmin_client:
         print("Failed to initialize Garmin Connect client. Exiting.")
         return
-    
+
     print("Garmin Connect client initialized successfully.")
-    
+
     # Configure all modules with the Garmin client
     activity_management.configure(garmin_client)
     health_wellness.configure(garmin_client)
@@ -122,10 +114,10 @@ def main():
     workouts.configure(garmin_client)
     data_management.configure(garmin_client)
     womens_health.configure(garmin_client)
-    
+
     # Create the MCP app
     app = FastMCP("Garmin Connect v1.0")
-    
+
     # Register tools from all modules
     app = activity_management.register_tools(app)
     app = health_wellness.register_tools(app)
@@ -138,7 +130,7 @@ def main():
     app = workouts.register_tools(app)
     app = data_management.register_tools(app)
     app = womens_health.register_tools(app)
-    
+
     # Add activity listing tool directly to the app
     @app.tool()
     async def list_activities(limit: int = 5) -> str:
@@ -162,7 +154,7 @@ def main():
             return result
         except Exception as e:
             return f"Error retrieving activities: {str(e)}"
-    
+
     # Run the MCP server
     app.run()
 

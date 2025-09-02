@@ -16,17 +16,7 @@ This Model Context Protocol (MCP) server connects to Garmin Connect and exposes 
 1. Install the required packages on a new environment:
 
 ```bash
-virtualenv .venv
-source .venv/bin/activate
-python -m pip install -r requirements.txt
-```
-
-
-2. Create a `.env` file in the project root with your Garmin credentials:
-
-```
-GARMIN_EMAIL=your.email@example.com
-GARMIN_PASSWORD=your-password
+uv sync
 ```
 
 ## Running the Server
@@ -46,8 +36,16 @@ Add this server configuration:
 {
   "mcpServers": {
     "garmin": {
-      "command": "python", // if you created a new environment this should be "<root_folder>/.venv/bin/python"
-      "args": ["<path to>/garmin_mcp/garmin_mcp_server.py"]
+      "command": "uvx",
+      "args": [
+        "--python", "3.12",
+        "--from", "git+https://github.com/Taxuspt/garmin_mcp",
+        "garmin-mcp"
+      ],
+      "env": {
+        "GARMIN_EMAIL": "YOUR_GARMIN_EMAIL",
+        "GARMIN_PASSWORD": "YOUR_GARMIN_PASSWORD"
+      }
     }
   }
 }
@@ -76,13 +74,11 @@ Once connected in Claude, you can ask questions like:
 
 ## Security Note
 
-This server requires your Garmin Connect credentials in the `.env` file. Keep this file secure and never commit it to a repository.
-
 ## Troubleshooting
 
 If you encounter login issues:
 
-1. Verify your credentials in the `.env` file are correct
+1. Verify your credentials are correct
 2. Check if Garmin Connect requires additional verification
 3. Ensure the garminconnect package is up to date
 
